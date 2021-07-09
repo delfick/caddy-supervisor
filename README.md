@@ -20,6 +20,8 @@ For every process in the **supervisor** caddyfile directive a command is execute
       env APP_ENV production
       env DEBUG false
       
+      user www-data
+      
       restart_policy always # default to 'always', other values allowed: 'never', 'on_failure'
       
       redirect_stdout file /var/log/fpm.log       # redirect command stdout to a file. Default to caddy `stdout`
@@ -55,6 +57,7 @@ mysite.com
   - **always**: always restart
 - **termination_grace_period**: amount of time to wait for application graceful termination before killing it. Ex: 10s
 - **replicas**: number of instances that should be executed. Default: 1.
+- **user**: the user that runs the command. _Ignored on windows systems_
 
 On windows **termination_grace_period** is ignored and the command is killed immediatelly due to lack of signals support.
 
