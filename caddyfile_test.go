@@ -197,6 +197,26 @@ func Test_parseSupervisor(t *testing.T) {
 			expectError: "Testfile:4 - Error during parsing: Wrong argument count or unexpected line ending after 'redirect_stderr'",
 		},
 		{
+			name: "user is provided",
+			givenCaddyfile: `
+				supervisor {
+				  php-fpm --fpm-config=fpm-8.0.2.ini {
+					user www-data
+				  }
+				}
+			`,
+			expectJson: `
+				{
+					"supervise": [
+						{
+							"command":["php-fpm","--fpm-config=fpm-8.0.2.ini"],
+							"user": "www-data"
+						}
+					]
+				}
+			`,
+		},
+		{
 			name: "replicas",
 			givenCaddyfile: `
 				supervisor {
