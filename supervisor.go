@@ -43,11 +43,7 @@ func (s *Supervisor) Run() {
 			currentUser,_ := user.Current()
 
 			if currentUser.Username != s.Options.User {
-				executingUser, err := user.Lookup(s.Options.User)
-
-				if err != nil {
-					s.logger.Error("unknown user: ", zap.Error(err))
-				}
+				executingUser,_ := user.Lookup(s.Options.User)
 
 				uid, _ := strconv.Atoi(executingUser.Uid)
 				gid, _ := strconv.Atoi(executingUser.Gid)

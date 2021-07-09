@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"go.uber.org/zap"
+	"os/user"
 	"strings"
 	"time"
 )
@@ -69,6 +70,12 @@ func (d Definition) ToSupervisors(logger *zap.Logger) ([]*Supervisor, error) {
 		Env:           d.envToCmdArg(),
 		RestartPolicy: d.RestartPolicy,
 		User:          d.User,
+	}
+
+	if d.User != "" {
+		if _,err  := user.Lookup(d.User); err != nil {
+			return supervisors, err
+		}
 	}
 
 	replicas := d.Replicas
