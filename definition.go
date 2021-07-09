@@ -34,6 +34,9 @@ type Definition struct {
 	RestartPolicy RestartPolicy `json:"restart_policy,omitempty"`
 	// TerminationGracePeriod defines the amount of time to wait for Command graceful termination before killing it. Ex: 10s
 	TerminationGracePeriod string `json:"termination_grace_period,omitempty"`
+	// User defines the user which executes the Command.
+	// Default: current user
+	User string `json:"user,omitempty"`
 }
 
 type OutputTarget struct {
@@ -65,6 +68,7 @@ func (d Definition) ToSupervisors(logger *zap.Logger) ([]*Supervisor, error) {
 		Dir:           d.Dir,
 		Env:           d.envToCmdArg(),
 		RestartPolicy: d.RestartPolicy,
+		User:          d.User,
 	}
 
 	replicas := d.Replicas

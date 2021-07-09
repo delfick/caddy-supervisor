@@ -22,6 +22,7 @@ type Options struct {
 	RedirectStderr         OutputTarget
 	RestartPolicy          RestartPolicy
 	TerminationGracePeriod time.Duration
+	User                   string
 }
 
 // RestartPolicy determines when a supervised process should be restarted

@@ -6,6 +6,9 @@ import (
 	"go.uber.org/zap"
 	"os"
 	"os/exec"
+	"os/user"
+	"strconv"
+	"syscall"
 	"time"
 )
 
@@ -35,6 +38,26 @@ func (s *Supervisor) Run() {
 		s.cmd = exec.Command(s.Options.Command, s.Options.Args...)
 		configureSysProcAttr(s.cmd)
 		s.cmd.Env = append(os.Environ(), s.Options.Env...)
+
+		if s.Options.User != "" {
+			currentUser,_ := user.Current()
+
+			if currentUser.Username != s.Options.User {
+				executingUser, err := user.Lookup(s.Options.User)
+
+				if err != nil {
+					s.logger.Error("unknown user: ", zap.Error(err))
+				}
+
+				uid, _ := strconv.Atoi(executingUser.Uid)
+				gid, _ := strconv.Atoi(executingUser.Gid)
+
+				s.cmd.SysProcAttr.Credential = &syscall.Credential{
+					Uid: uint32(uid),
+					Gid: uint32(gid),
+				}
+			}
+		}
 
 		if s.Options.Dir != "" {
 			s.cmd.Dir = s.Options.Dir
