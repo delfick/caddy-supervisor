@@ -83,7 +83,7 @@ func (d Definition) ToSupervisors(logger *zap.Logger) ([]*Supervisor, error) {
 		if err := validateOutputTarget(*d.RedirectStdout); err != nil {
 			return supervisors, err
 		}
-		opts.RedirectStdout = *d.RedirectStderr
+		opts.RedirectStdout = *d.RedirectStdout
 	}
 
 	if d.RedirectStderr == nil {
