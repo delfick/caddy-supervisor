@@ -36,6 +36,8 @@ func (s *Supervisor) Run() {
 		configureSysProcAttr(s.cmd)
 		s.cmd.Env = append(os.Environ(), s.Options.Env...)
 
+		configureExecutingUser(s.cmd, s.Options.User)
+
 		if s.Options.Dir != "" {
 			s.cmd.Dir = s.Options.Dir
 		}

@@ -122,6 +122,14 @@ func parseSupervisor(d *caddyfile.Dispenser, _ interface{}) (interface{}, error)
 				}
 
 				def.Env[envKey] = envValue
+			case "user":
+				var user string
+
+				if !d.Args(&user) {
+					return nil, d.ArgErr()
+				}
+
+				def.User = user
 			}
 		}
 
