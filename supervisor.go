@@ -3,10 +3,11 @@ package supervisor
 import (
 	"errors"
 	"fmt"
-	"go.uber.org/zap"
 	"os"
 	"os/exec"
 	"time"
+
+	"go.uber.org/zap"
 )
 
 var emptyFunc = func() {}
@@ -122,11 +123,13 @@ func (s *Supervisor) Stop() {
 	s.keepRunning = false
 
 	if cmdIsRunning(s.cmd) {
-		s.logger.Debug("sending 'interrupt signal to gracefully stop the process")
+		s.logger.Debug("2sending 'interrupt signal to gracefully stop the process")
 
 		err := s.cmd.Process.Signal(os.Interrupt)
+		s.logger.Debug("ERRRROROROROROR", zap.Error(err))
 		if err == nil {
 			go func() {
+				s.logger.Debug("grace period", zap.Any("grace", s.Options.TerminationGracePeriod))
 				time.Sleep(s.Options.TerminationGracePeriod)
 				if cmdIsRunning(s.cmd) {
 					s.logger.
@@ -137,7 +140,9 @@ func (s *Supervisor) Stop() {
 				}
 			}()
 
+			s.logger.Debug("start wait")
 			s.cmd.Wait()
+			s.logger.Debug("end wait")
 		} else {
 			s.logger.
 				With(zap.Error(err)).

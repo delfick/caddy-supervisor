@@ -1,4 +1,4 @@
-module github.com/baldinof/caddy-supervisor
+module github.com/delfick/caddy-supervisor
 
 go 1.15
 
