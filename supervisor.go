@@ -3,10 +3,12 @@ package supervisor
 import (
 	"errors"
 	"fmt"
-	"go.uber.org/zap"
 	"os"
 	"os/exec"
+	"sync"
 	"time"
+
+	"go.uber.org/zap"
 )
 
 var emptyFunc = func() {}
@@ -23,6 +25,7 @@ type Supervisor struct {
 	cmd         *exec.Cmd
 	keepRunning bool
 	logger      *zap.Logger
+	waiter      sync.WaitGroup
 }
 
 // Run a process and supervise
@@ -68,7 +71,9 @@ func (s *Supervisor) Run() {
 		} else {
 			s.logger.Info("process started", zap.Int("pid", s.cmd.Process.Pid))
 
+			s.waiter.Add(1)
 			err = s.cmd.Wait()
+			s.waiter.Done()
 		}
 
 		duration := time.Now().Sub(start)
@@ -137,7 +142,7 @@ func (s *Supervisor) Stop() {
 				}
 			}()
 
-			s.cmd.Wait()
+			s.waiter.Wait()
 		} else {
 			s.logger.
 				With(zap.Error(err)).
